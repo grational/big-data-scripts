@@ -4,7 +4,7 @@ set -euxo pipefail
 usage() {
 	code=${1}
 	echo 'usage:'
-	echo "./${0##*/} <project_dir> [reducers=1]"
+	echo "${0##*/} <project_dir> [reducers=1]"
 	exit $code
 }
 die() {

@@ -14,12 +14,12 @@ die() {
 	exit $ecode
 }
 activate_container() {
-	container_name="${1:-big_dingding}"
+	local container_name="${1}"
 	docker run --name=$container_name --hostname=quickstart.cloudera --detach --interactive --tty --privileged -p 8088 cloudera/quickstart /bin/bash
 	# subtask 2.1: fix the yarn configuration file to actually allow hadoop to run jobs
-	yarn_configuration_file='/etc/alternatives/hadoop-conf/yarn-site.xml'
-	yarn_conf_line="$(docker exec -it "${container_name}" grep -n '<configuration>' "${yarn_configuration_file}" | cut -d: -f1)" && ((yarn_conf_line++))
-	healthy_disk_properties='<property><name>yarn.nodemanager.disk-health-checker.min-healthy-disks</name><value>0.0</value></property> <property><name>yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage</name><value>100.0</value></property>'
+	local yarn_configuration_file='/etc/alternatives/hadoop-conf/yarn-site.xml'
+	local yarn_conf_line="$(docker exec -it "${container_name}" grep -n '<configuration>' "${yarn_configuration_file}" | cut -d: -f1)" && ((yarn_conf_line++))
+	local healthy_disk_properties='<property><name>yarn.nodemanager.disk-health-checker.min-healthy-disks</name><value>0.0</value></property> <property><name>yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage</name><value>100.0</value></property>'
 	# modify the yarn configuration file
 	docker exec -it "${container_name}" sed -i "${yarn_conf_line}i${healthy_disk_properties}" "${yarn_configuration_file}"
 	# subtask 2.2: fix the docker-quickstart script to not exec bash
@@ -66,10 +66,10 @@ if [[ $(docker ps -aq -f name="${container_name}") ]]; then
 		docker start "${container_name}"
 	elif ! [[ $(docker ps -aq -f status=running -f name="${container_name}") ]]; then
 		docker rm "$container_name"
-		activate_container
+		activate_container "${container_name}"
 	fi
 else
-	activate_container
+	activate_container "${container_name}"
 fi
 
 # task 3: copy the input files into the container

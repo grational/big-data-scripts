@@ -105,9 +105,15 @@ while ! [[ "$d" =~ ^src/main/java/ ]]; do d="${d#*/}"; done
 main_class=$(echo ${d#*/*/*/} | cut -d. -f1 | tr / .)
 if [[ $(ls -1 "${input_data}" | wc -l) -gt 1 ]]; then
 	echo "select one of the following input files: "
-	select input_file in $(ls -1 "${input_data}"); do
-		input_file="${input_directory}/${input_file}"
-		break
+	select input_file in $(ls -1 "${input_data}") "whole '${input_data}' directory"; do
+		case $input_file in
+			"whole '${input_data}' directory")
+				input_file="${input_directory}"
+				break ;;
+			*)
+				input_file="${input_directory}/${input_file}"
+				break ;;
+		esac
 	done
 else
 	input_file="${input_directory}/$(ls -1 "${input_data}" | head -n1)"

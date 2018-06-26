@@ -131,3 +131,8 @@ set +e
 set -e
 docker cp -a "${container_name}:${container_directory}/${output_directory}" .
 echo "See the content of '${output_directory}'"
+
+## open the hadoop web interface
+[[ $(uname) == 'Darwin' ]] && command=open || command=xdg-open
+hadoop_wui_port=$(docker port "${container_name}" | cut -d: -f2)
+$command http://localhost:${hadoop_wui_port}/cluster 

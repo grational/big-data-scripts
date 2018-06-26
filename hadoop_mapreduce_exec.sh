@@ -36,7 +36,7 @@ activate_container() {
 if (( ${#@} < 1 )); then usage 1; fi
 
 [[ -d "${1}" ]] && { project_dir="${1}"; shift; }
-(( ${#@} > 0 )) && [[ "${1}" =~ [1-9][0-9]* ]] && reducers="${1}" || reducers=1
+(( ${#@} > 0 )) && [[ "${1}" =~ [1-9][0-9]* ]] && { reducers="${1}"; shift; } || reducers=1
 
 # task 1: generate/refresh the jar file
 # subtask 1.1: choose among gradle and maven (preferring the first one)
@@ -118,7 +118,7 @@ if [[ $(ls -1 "${input_data}" | wc -l) -gt 1 ]]; then
 else
 	input_file="${input_directory}/$(ls -1 "${input_data}" | head -n1)"
 fi
-docker exec -it "${container_name}" hadoop jar "${container_directory}/${jar_name}" "${main_class}" ${reducers} "${input_file}" "${output_directory}"
+docker exec -it "${container_name}" hadoop jar "${container_directory}/${jar_name}" "${main_class}" ${reducers} "${input_file}" "${output_directory}" "${@}"
 
 set +e
 docker exec -it "${container_name}" bash -c "[[ -d '${container_directory}/${output_directory}' ]] && rm -rf '${container_directory}/${output_directory}'"

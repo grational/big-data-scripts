@@ -54,7 +54,7 @@ case $bt in
 		input_jar=$(ls -1t "${project_dir}"/build/libs/*.jar | head -n1)
 		;;
 	maven)
-		(cd "${project_dir}" && mvn clean package)
+		(cd "${project_dir}" && sed -i -r 's/(source|target)>(1\.)?([89]|10)/\1>1.7/' pom.xm && mvn clean package)
 		input_jar=$(ls -1t "${project_dir}"/target/*.jar | head -n1)
 		;;
 esac
